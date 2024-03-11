@@ -50,6 +50,10 @@ node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
+Currently only in the target-volume challenge:
+* `time_period` (default 3600): the amount of time for which indexing should take place
+* `target_throughput`(default 100): the number of bulk indexing operations per second that should be performed
+
 ### License
 
 Original license text:
