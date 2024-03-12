@@ -9,6 +9,7 @@
       "name": "index-loop",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
+      "detailed-results": true,
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "looped": true,
       "corpora": "http_logs"
