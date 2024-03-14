@@ -26,32 +26,28 @@
     {
       "name": "indexing-and-querying",
       "parallel": {
-        "completed-by": "bulk-index",
+        "completed-by": "index-loop",
         "tasks": [
           {
             "operation": "200s-in-range",
-            "name": "200s-in-range",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "400s-in-range",
-            "name": "400s-in-range",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "hourly_agg",
-            "name": "hourly_agg",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "scroll",
-            "name": "scroll",
             "warmup-iterations": 5,
             "iterations": 5,
             "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
@@ -59,48 +55,41 @@
           },
           {
             "operation": "desc_sort_timestamp",
-            "name": "desc_sort_timestamp",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "asc_sort_timestamp",
-            "name": "asc_sort_timestamp",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "desc_sort_with_after_timestamp",
-            "name": "desc_sort_with_after_timestamp",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "asc_sort_with_after_timestamp",
-            "name": "asc_sort_with_after_timestamp",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "desc_sort_timestamp_can_match_shortcut",
-            "name": "desc_sort_timestamp_can_match_shortcut",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
             "operation": "desc_sort_timestamp_no_can_match_shortcut",
-            "name": "desc_sort_timestamp_no_can_match_shortcut",
             "warmup-iterations": 5,
             "iterations": 5,
             "target-throughput": 1
           },
           {
-            "name": "bulk-index",
             "operation": "index-loop",
             "time-period": {{time_period | default(3600)}},
             "target-throughput": {{target_throughput | default(100)}},
