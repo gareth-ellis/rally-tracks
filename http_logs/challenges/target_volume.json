@@ -81,6 +81,7 @@
           },
           {
             "operation": "index-loop",
+            name:"index-loop",
             "time-period": {{time_period | default(3600)}},
             "target-throughput": {{target_throughput | default(100)}},
             "clients": {{bulk_indexing_clients | default(8)}},
