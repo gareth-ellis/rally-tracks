@@ -21,7 +21,7 @@ class RuntimeFieldResolver(loader.TrackProcessor):
     def on_after_load_track(self, t):
         for challenge in t.challenges:
             for task in challenge.schedule:
-                m = self.PATTERN.match(task.name)
+                m = self.PATTERN.match(task.get("name", None))
                 if m is not None:
                     source = m[1]
                     impl = m[2].replace("-", "_")
