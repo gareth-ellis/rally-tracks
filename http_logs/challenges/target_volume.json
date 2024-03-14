@@ -1,34 +1,116 @@
 {
-    "name": "target-volume",
-    "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
-    "schedule": [
-      {
-        "operation": "delete-index"
-      },
-      {
-        "operation": {
-          "operation-type": "create-index",
-          "settings": {{index_settings | default({}) | tojson}}
+  "name": "target-volume",
+  "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {
+          {index_settings | default({}) | tojson
+          }
         }
-      },
-      {
-        "name": "check-cluster-health",
-        "operation": {
-          "operation-type": "cluster-health",
-          "index": "logs-*",
-          "request-params": {
-            "wait_for_status": "{{cluster_health | default('green')}}",
-            "wait_for_no_relocating_shards": "true"
-          },
-          "retry-until-success": true
-        }
-      },
-      {
-        "operation": "index-loop",
-        "time-period": {{time_period | default(3600)}},
-        "target-throughput": {{target_throughput | default(100)}},
-        "clients": {{bulk_indexing_clients | default(8)}},
-        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
       }
-    ]
-  }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "logs-*",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "indexing-and-querying",
+      "parallel": {
+        "completed-by": "bulk-index",
+        "tasks": [
+          {
+            "operation": "200s-in-range",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "400s-in-range",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "hourly_agg",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "scroll",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
+            "target-throughput": 1
+          },
+          {
+            "operation": "desc_sort_timestamp",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "asc_sort_timestamp",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "desc_sort_with_after_timestamp",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "asc_sort_with_after_timestamp",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "desc_sort_timestamp_can_match_shortcut",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "operation": "desc_sort_timestamp_no_can_match_shortcut",
+            "warmup-iterations": 5,
+            "iterations": 5,
+            "target-throughput": 1
+          },
+          {
+            "name": "bulk-index",
+            "operation": "index-loop",
+            "time-period": {
+              {time_period | default(3600)
+              }
+            },
+            "target-throughput": {
+              {target_throughput | default(100)
+              }
+            },
+            "clients": {
+              {bulk_indexing_clients | default(8)
+              }
+            },
+            "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          }
+        ]
+      }
+    }
+  ]
+}
