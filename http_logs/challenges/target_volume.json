@@ -26,6 +26,7 @@
     {
       "parallel": {
         "completed-by": "index-loop",
+        "clients": {{total_clients | default(9)}},
         "tasks": [
           {
             "operation": "200s-in-range",
