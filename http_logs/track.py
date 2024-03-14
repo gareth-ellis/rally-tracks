@@ -2,7 +2,7 @@ import re
 from copy import copy
 
 from esrally import exceptions
-from esrally.track import loader
+from esrally.track import loader, Task
 
 
 def reindex(es, params):
@@ -21,12 +21,13 @@ class RuntimeFieldResolver(loader.TrackProcessor):
     def on_after_load_track(self, t):
         for challenge in t.challenges:
             for task in challenge.schedule:
-                m = self.PATTERN.match(task.get("name", None))
-                if m is not None:
-                    source = m[1]
-                    impl = m[2].replace("-", "_")
-                    task.operation = copy(task.operation)
-                    task.operation.params = self._replace_field(f"{impl}.from_{source}.", task.operation.params)
+                if type(task) == Task:
+                    m = self.PATTERN.match(task.name)
+                    if m is not None:
+                        source = m[1]
+                        impl = m[2].replace("-", "_")
+                        task.operation = copy(task.operation)
+                        task.operation.params = self._replace_field(f"{impl}.from_{source}.", task.operation.params)
 
     def on_prepare_track(self, track, data_root_dir):
         # TODO remove this backwards compatibility hatch after several Rally releases
