@@ -24,7 +24,6 @@
       }
     },
     {
-      "name": "indexing-and-querying",
       "parallel": {
         "completed-by": "index-loop",
         "tasks": [
