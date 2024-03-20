@@ -21,13 +21,15 @@
   "name": "initial-documents-indexing",
   "operation-type": "bulk",
   "bulk-size": {{ initial_indexing_bulk_size | default(250) | int }},
-  "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
+  "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }},
+  "detailed-results": {{ detailed_results | default(false) }}
 },
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
   "bulk-size": {{ parallel_indexing_bulk_size | default(250) }},
-  "looped": true
+  "looped": true,
+  "detailed-results": {{ detailed_results | default(false) }}
 },
 {
   "name": "refresh-after-index",
